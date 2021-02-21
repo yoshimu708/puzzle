@@ -17,8 +17,62 @@
       this.img.addEventListener('load',()=>{
         this.render();
       });
-   
+      this.canvas.addEventListener('click', e =>{
+        const rect = this.canvas.getBoundingClientRect();
+        const col =Math.floor((e.clientX - rect.left)/70);
+        const row =Math.floor((e.clientY - rect.top)/70);
+        console.log(col,row);
+        this.swapTiles(col,row);
+        this.render();
+      });
     } 
+
+    swapTiles(col,row){
+      if(this.tiles[row][col]===15){
+        return;
+      }
+
+      for(let i = 0;i<4;i++){
+        let destCol;
+        let destRow;
+
+        switch(i){
+          case 0:
+           destCol=col;
+           destRow=row -1;
+           break;
+          case 1:
+           destCol=col;
+           destRow=row +1;
+           break;
+          case 2:
+           destCol=col -1;
+           destRow=row;
+           break;
+          case 3:
+           destCol=col +1;
+           destRow=row;
+           break;
+        }
+
+        if(
+          destCol<0||destCol>3||
+          destRow<0||destRow>3
+        ){
+          continue;
+        }
+        if(this.tiles[destRow][destCol]===15){
+          [
+            this.tiles[row][col],
+            this.tiles[destRow][destCol],
+          ] =[
+            this.tiles[destRow][destCol],
+            this.tiles[row][col],
+          ];
+          break;
+        }
+      }
+    }
 
     render(){
       for(let row=0; row<4;row++){
