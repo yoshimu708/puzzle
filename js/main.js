@@ -3,14 +3,21 @@
 (()=>{
   
   class Puzzle{
-    constructor(canvas){
+    constructor(canvas,level){
       this.canvas = canvas;
+      this.level = level;
       this.ctx= this.canvas.getContext('2d');
       this.tiles=[
         [0,1,2,3],
         [4,5,6,7],
         [8,9,10,11],
         [12,13,14,15],
+      ];
+      this.UDLR = [
+        [0,-1],
+        [0,1],
+        [-1,0],
+        [1,0],
       ];
       this.img = document.createElement('img');
       this.img.src="img/15puzzle.png";
@@ -25,7 +32,37 @@
         this.swapTiles(col,row);
         this.render();
       });
+      this.shuffle(this.level);
     } 
+
+    shuffle(n){
+      let blankCol =3;
+      let blankRow =3;
+     
+
+      for(let i =0; i<n; i++){
+        let destCol;
+        let destRow;
+        do{
+          const dir= Math.floor(Math.random()*4);
+          
+          destCol=blankCol+this.UDLR[dir][0];
+          destRow=blankRow+this.UDLR[dir][1];
+        }while(
+          this.isOutside(destCol,destRow)===true
+        );
+
+        [
+          this.tiles[blankRow][blankCol],
+          this.tiles[destRow][destCol],
+        ]=[
+          this.tiles[destRow][destCol],
+          this.tiles[blankRow][blankCol],
+        ];
+
+        [blankCol,blankRow] = [destCol,destRow];
+      }
+    }
 
     swapTiles(col,row){
       if(this.tiles[row][col]===15){
@@ -33,32 +70,10 @@
       }
 
       for(let i = 0;i<4;i++){
-        let destCol;
-        let destRow;
-
-        switch(i){
-          case 0:
-           destCol=col;
-           destRow=row -1;
-           break;
-          case 1:
-           destCol=col;
-           destRow=row +1;
-           break;
-          case 2:
-           destCol=col -1;
-           destRow=row;
-           break;
-          case 3:
-           destCol=col +1;
-           destRow=row;
-           break;
-        }
-
+        const destCol = col +this.UDLR[i][0];
+        const destRow = row +this.UDLR[i][1];
         if(
-          destCol<0||destCol>3||
-          destRow<0||destRow>3
-        ){
+          this.isOutside(destCol,destRow)===true){
           continue;
         }
         if(this.tiles[destRow][destCol]===15){
@@ -72,6 +87,13 @@
           break;
         }
       }
+    }
+
+    isOutside(destCol,destRow){
+      return(
+        destCol<0||destCol>3||
+        destRow<0||destRow>3
+      );
     }
 
     render(){
@@ -97,5 +119,5 @@
    return;
  }
 
- new Puzzle(canvas);
+ new Puzzle(canvas,30);
 })();
