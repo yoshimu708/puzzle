@@ -31,6 +31,10 @@
         console.log(col,row);
         this.swapTiles(col,row);
         this.render();
+
+        if(this.isComplete()===true){
+          this.renderGameClear();
+        }
       });
       this.shuffle(this.level);
     } 
@@ -94,6 +98,18 @@
         destCol<0||destCol>3||
         destRow<0||destRow>3
       );
+    }
+
+    isComplete(){
+      return true;
+    }
+
+    renderGameClear(){
+      this.ctx.fillStyle = 'rgba(0,0,0,0.5';
+      this.ctx.fillRect(0,0,this.canvas.width,this.canvas.height);
+      this.ctx.font='28px Arial';
+      this.ctx.fillStyle ='#fff';
+      this.ctx.fillText('GAME CLEAR',40,150);
     }
 
     render(){
